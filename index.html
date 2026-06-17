@@ -45,6 +45,11 @@
     .section { margin-top:12px; padding-top:10px; border-top:1px solid #e5e7eb; }
     .checks { display:flex; flex-wrap:wrap; gap:8px 12px; font-size:13px; }
     .checks label { display:flex; align-items:center; gap:5px; margin:0; font-size:13px; color:#374151; }
+    .multiBox { width:100%; max-height:96px; overflow:auto; border:1px solid #cfd8e3; border-radius:10px; padding:8px; background:#fff; }
+    .multiBox label { display:flex; align-items:center; gap:6px; margin:0 0 6px 0; font-size:12px; color:#374151; }
+    .multiBox label:last-child { margin-bottom:0; }
+    .miniActions { display:flex; gap:6px; margin:4px 0 6px; }
+    .miniActions button { width:auto; padding:4px 8px; border-radius:8px; font-size:11px; }
     .kpis { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
     .kpi { background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:9px; }
     .kpi .name { color:#6b7280; font-size:11px; }
@@ -86,8 +91,12 @@
           <select id="branchFilter" onchange="applyFilters()"></select>
         </div>
         <div>
-          <label>Truck ID / ผู้รับผิดชอบ</label>
-          <select id="truckFilter" onchange="applyFilters()"></select>
+          <label>Truck ID / ผู้รับผิดชอบ <span class="pill">เลือกได้หลายตัว</span></label>
+          <div class="miniActions">
+            <button type="button" onclick="setAllTruckChecks(true)">เลือกทั้งหมด</button>
+            <button type="button" onclick="setAllTruckChecks(false)">ล้าง</button>
+          </div>
+          <div id="truckChecks" class="multiBox"></div>
         </div>
         <div>
           <label>สถานะลูกค้า</label>
@@ -177,12 +186,19 @@ function escapeHtml(s) {
 }
 function initFilters() {
   setOptions('branchFilter', uniqueValues('branch'));
-  setOptions('truckFilter', uniqueValues('truck_id'));
   setOptions('statusFilter', uniqueValues('status'));
+
+  document.getElementById('truckChecks').innerHTML = uniqueValues('truck_id').map(v =>
+    `<label><input type="checkbox" class="truckCheck" value="${escapeHtml(v)}" onchange="applyFilters()"> ${escapeHtml(v)}</label>`
+  ).join('');
 
   document.getElementById('hubRadiusChecks').innerHTML = Object.keys(HUBS).map(k =>
     `<label><input type="checkbox" class="hubCheck" value="${k}" onchange="applyFilters()"> ${k}</label>`
   ).join('');
+}
+function setAllTruckChecks(checked) {
+  document.querySelectorAll('.truckCheck').forEach(x => x.checked = checked);
+  applyFilters();
 }
 function markerColor(row) {
   return COLORS[row.branch] || '#64748b';
@@ -193,7 +209,7 @@ function isInSelectedRadius(row, selectedHubs) {
 }
 function applyFilters() {
   const branch = document.getElementById('branchFilter').value;
-  const truck = document.getElementById('truckFilter').value;
+  const selectedTrucks = [...document.querySelectorAll('.truckCheck:checked')].map(x => x.value);
   const status = document.getElementById('statusFilter').value;
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
   const selectedHubs = [...document.querySelectorAll('.hubCheck:checked')].map(x => x.value);
@@ -222,7 +238,7 @@ function applyFilters() {
 
   const filtered = CUSTOMER_DATA.filter(r => {
     if (branch && r.branch !== branch) return false;
-    if (truck && r.truck_id !== truck) return false;
+    if (selectedTrucks.length > 0 && !selectedTrucks.includes(r.truck_id)) return false;
     if (status && r.status !== status) return false;
     if (onlyMUK && r.branch !== 'MUK') return false;
     if (q && !(`${r.customer_id} ${r.customer_name}`.toLowerCase().includes(q))) return false;
