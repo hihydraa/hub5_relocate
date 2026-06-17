@@ -109,7 +109,7 @@
       </div>
 
       <div class="section">
-        <b>รัศมี 100 กม. รอบสาขา</b> <span class="pill">เลือกได้หลายสาขา</span>
+        <b>รัศมี 80 กม. รอบสาขา</b> <span class="pill">เลือกได้หลายสาขา</span>
         <div class="checks" id="hubRadiusChecks"></div>
       </div>
 
@@ -126,7 +126,7 @@
         <b>สรุปการย้าย MUK → GCH</b>
         <div class="kpis">
           <div class="kpi"><div class="name">จำนวนลูกค้า MUK ที่แสดง</div><div class="val" id="mukCount">0</div></div>
-          <div class="kpi"><div class="name">ลูกค้า MUK ในรัศมี GCH 100 กม.</div><div class="val" id="gchCoverage">0%</div></div>
+          <div class="kpi"><div class="name">ลูกค้า MUK ในรัศมี GCH 80 กม.</div><div class="val" id="gchCoverage">0%</div></div>
           <div class="kpi"><div class="name">รวมระยะเดิมจาก MUK</div><div class="val" id="oldDist">0 km</div></div>
           <div class="kpi"><div class="name">รวมระยะใหม่จาก GCH</div><div class="val" id="newDist">0 km</div></div>
           <div class="kpi full"><div class="name">ระยะทางเพิ่ม/ลด รวม</div><div class="val" id="deltaDist">0 km</div></div>
@@ -228,11 +228,11 @@ function applyFilters() {
         .addTo(hubLayer);
     });
   }
-
+  //รัศมี hub 80 km.
   selectedHubs.forEach(h => {
     const p = HUBS[h], color = COLORS[h] || '#f59e0b';
-    L.circle([p.lat, p.lng], {radius:100000, color, fillColor:color, fillOpacity:.07, weight:2, dashArray:'6 6'})
-      .bindPopup(`<b>รัศมี 100 กม. รอบ ${h}</b>`)
+    L.circle([p.lat, p.lng], {radius:80000, color, fillColor:color, fillOpacity:.07, weight:2, dashArray:'6 6'})
+      .bindPopup(`<b>รัศมี 80 กม. รอบ ${h}</b>`)
       .addTo(radiusLayer);
   });
 
