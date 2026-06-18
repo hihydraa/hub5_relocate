@@ -109,7 +109,7 @@
       </div>
 
       <div class="section">
-        <b>รัศมี 100 กม. รอบสาขา</b> <span class="pill">เลือกได้หลายสาขา</span>
+        <b>รัศมี 80 กม. รอบสาขา</b> <span class="pill">เลือกได้หลายสาขา</span>
         <div class="checks" id="hubRadiusChecks"></div>
       </div>
 
@@ -126,7 +126,7 @@
         <b>สรุปการย้าย MUK → GCH</b>
         <div class="kpis">
           <div class="kpi"><div class="name">จำนวนลูกค้า MUK ที่แสดง</div><div class="val" id="mukCount">0</div></div>
-          <div class="kpi"><div class="name">ลูกค้า MUK ในรัศมี GCH 100 กม.</div><div class="val" id="gchCoverage">0%</div></div>
+          <div class="kpi"><div class="name">ลูกค้า MUK ในรัศมี GCH 80 กม.</div><div class="val" id="gchCoverage">0%</div></div>
           <div class="kpi"><div class="name">รวมระยะเดิมจาก MUK</div><div class="val" id="oldDist">0 km</div></div>
           <div class="kpi"><div class="name">รวมระยะใหม่จาก GCH</div><div class="val" id="newDist">0 km</div></div>
           <div class="kpi full"><div class="name">ระยะทางเพิ่ม/ลด รวม</div><div class="val" id="deltaDist">0 km</div></div>
@@ -229,7 +229,7 @@ function renderLegend() {
 }
 function isInSelectedRadius(row, selectedHubs) {
   if (selectedHubs.length === 0) return true;
-  return selectedHubs.some(h => haversineKm(row.latitude, row.longitude, HUBS[h].lat, HUBS[h].lng) <= 100);
+  return selectedHubs.some(h => haversineKm(row.latitude, row.longitude, HUBS[h].lat, HUBS[h].lng) <= 80);
 }
 function applyFilters() {
   const branch = document.getElementById('branchFilter').value;
@@ -255,8 +255,8 @@ function applyFilters() {
 
   selectedHubs.forEach(h => {
     const p = HUBS[h], color = COLORS[h] || '#f59e0b';
-    L.circle([p.lat, p.lng], {radius:100000, color, fillColor:color, fillOpacity:.07, weight:2, dashArray:'6 6'})
-      .bindPopup(`<b>รัศมี 100 กม. รอบ ${h}</b>`)
+    L.circle([p.lat, p.lng], {radius:80000, color, fillColor:color, fillOpacity:.07, weight:2, dashArray:'6 6'})
+      .bindPopup(`<b>รัศมี 80 กม. รอบ ${h}</b>`)
       .addTo(radiusLayer);
   });
 
@@ -305,11 +305,11 @@ function updateRelocationSummary(filtered) {
   const oldTotal = visibleMukRows.reduce((s,r)=>s+r.oldKm,0);
   const newTotal = visibleMukRows.reduce((s,r)=>s+r.newKm,0);
   const delta = newTotal - oldTotal;
-  const inGch100 = visibleMukRows.filter(r => r.newKm <= 100).length;
-  const coverage = visibleMukRows.length ? inGch100 / visibleMukRows.length * 100 : 0;
+  const inGch80 = visibleMukRows.filter(r => r.newKm <= 80).length;
+  const coverage = visibleMukRows.length ? inGch80 / visibleMukRows.length * 100 : 0;
 
   document.getElementById('mukCount').textContent = visibleMukRows.length.toLocaleString('th-TH');
-  document.getElementById('gchCoverage').textContent = `${fmt(coverage,0)}% (${inGch100}/${visibleMukRows.length})`;
+  document.getElementById('gchCoverage').textContent = `${fmt(coverage,0)}% (${inGch80}/${visibleMukRows.length})`;
   document.getElementById('oldDist').textContent = `${fmt(oldTotal)} km`;
   document.getElementById('newDist').textContent = `${fmt(newTotal)} km`;
   const deltaEl = document.getElementById('deltaDist');
